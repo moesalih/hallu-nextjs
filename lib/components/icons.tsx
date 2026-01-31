@@ -4,6 +4,7 @@ import {
   Bell,
   BellDot,
   BookUser,
+  Bot,
   Braces,
   ChartColumn,
   Ellipsis,
@@ -21,7 +22,6 @@ import {
   Pencil,
   PencilRuler,
   Quote,
-  Radar,
   Radio,
   Repeat,
   ScrollText,
@@ -37,7 +37,7 @@ import {
   Users,
 } from 'lucide-react'
 
-export const BrandIcon = Radar
+export const BrandIcon = Bot
 
 // Navigation
 export const SearchIcon = Search

@@ -1,6 +1,6 @@
-export const appName = 'Sonar'
-export const appDescription = 'Farcaster Explorer'
-export const accentColor = '#7755ee'
+export const appName = 'Hallu'
+export const appDescription = 'Latent Worlds'
+export const accentColor = '#22bbee'
 
 //////////
 

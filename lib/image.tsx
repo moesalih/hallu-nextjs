@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs'
-import { Radar } from 'lucide-static'
+import { Bot } from 'lucide-static'
 import { ImageResponse } from 'next/og'
 import path from 'path'
 
 import { accentColor, appDescription, appName } from '@/lib/metadata'
 
-const BrandIcon = Radar
+const BrandIcon = Bot
 
 export const size = { width: 945, height: 630 }
 export const contentType = 'image/png'
@@ -30,7 +30,7 @@ export async function heroImage({ accentColor, Icon, title, description }) {
         <div tw="flex text-[100px] tracking-[-5px] font-semibold">{title}</div>
         <div tw="flex text-[30px] opacity-50 tracking-[-1px]">{description}</div>
       </div>
-    </div>
+    </div>,
   )
 }
 
@@ -47,7 +47,7 @@ export async function profileImage(name: string, image: string) {
         <div tw="h-[20px]"></div>
         <div tw="flex text-[100px] tracking-[-5px] font-semibold">{name}</div>
       </div>
-    </div>
+    </div>,
   )
 }
 
@@ -62,7 +62,7 @@ export async function iconImage(rounded = false) {
     {
       width: 512,
       height: 512,
-    }
+    },
   )
 }
 
