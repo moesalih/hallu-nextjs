@@ -28,13 +28,13 @@ export function Post({ cast, display = 'default', hideSeparator = false }) {
     <div className={'p-4  border-neutral-400/25 ' + (hideSeparator ? '' : 'border-b')} onClick={viewPost}>
       <PostHeader onPress={viewProfile} cast={cast} />
       <div className="flex flex-col gap-3  mt-3">
-        <PostTag cast={cast} display={display} />
+        {/* <PostTag cast={cast} display={display} /> */}
         <PostText cast={cast} display={display} />
         <PostMedia cast={cast} />
-        <PostEmbeds cast={cast} />
-        <PostQuoteEmbed cast={cast} display={display} />
-        <PostPostedFrom cast={cast} display={display} />
-        <PostInteractions cast={cast} display={display} />
+        {/* <PostEmbeds cast={cast} /> */}
+        {/* <PostQuoteEmbed cast={cast} display={display} /> */}
+        {/* <PostPostedFrom cast={cast} display={display} /> */}
+        {/* <PostInteractions cast={cast} display={display} /> */}
       </div>
     </div>
   )
@@ -43,12 +43,11 @@ export function Post({ cast, display = 'default', hideSeparator = false }) {
 function PostHeader({ onPress, cast }) {
   return (
     <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={onPress}>
-      <img className="size-8 rounded-full object-cover" src={cast?.author?.pfp_url}></img>
-      <div className="font-semibold">{cast?.author?.username}</div>
-      <div className="text-sm opacity-50" title={formatDateFull(cast?.timestamp)}>
-        {formatDateRelative(cast?.timestamp)}
+      {/* <img className="size-8 rounded-full object-cover" src={cast?.user?.pfp_url}></img> */}
+      <div className="font-semibold">{cast?.user?.username}</div>
+      <div className="text-sm opacity-50" title={formatDateFull(cast?.created_at)}>
+        {formatDateRelative(cast?.created_at)}
       </div>
-      <img className="size-3 rounded-full opacity-75" src={cast?.app?.pfp_url}></img>
     </div>
   )
 }
@@ -91,8 +90,8 @@ function PostText({ cast, display = 'default' }) {
 }
 
 function PostMedia({ cast }) {
-  const images = cast.embeds?.filter((embed) => !!embed?.metadata?.image)
-  const videos = cast.embeds?.filter((embed) => !!embed?.metadata?.video)
+  const images = cast.images
+  const videos = []
 
   const [selectedImage, setSelectedImage] = useState(null)
 
@@ -113,10 +112,10 @@ function PostMedia({ cast }) {
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                setSelectedImage(image?.url)
+                setSelectedImage(image)
               }}
             >
-              <img src={image?.url} />
+              <img src={image} />
             </div>
           ))}
         </div>
@@ -137,7 +136,7 @@ function PostMedia({ cast }) {
         </div>
       )}
 
-      {videos?.map((m, i) => (
+      {/* {videos?.map((m, i) => (
         <ReactPlayer
           key={i}
           src={m.url}
@@ -146,7 +145,7 @@ function PostMedia({ cast }) {
           height="auto"
           className="w-full max-w-lg rounded-lg overflow-hidden"
         />
-      ))}
+      ))} */}
     </div>
   )
 }
@@ -162,7 +161,7 @@ function PostEmbeds({ cast }) {
       !embed?.metadata?.frame &&
       !embed?.metadata?.image &&
       !embed?.metadata?.video &&
-      !embed?.cast
+      !embed?.cast,
   )
 
   if (!frames?.length && !urls?.length && !other?.length) return null

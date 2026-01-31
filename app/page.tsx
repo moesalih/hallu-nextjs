@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { SearchForm } from '@/app/search/page'
 import { AccountSheet } from '@/lib/components/account-sheet'
+import { FeedBySlug } from '@/lib/components/feeds'
 import {
   AccountIcon,
   BrandIcon,
@@ -27,11 +28,13 @@ import { haptics } from '@/lib/utils/haptics'
 export default function Home() {
   return (
     <div className="max-w-2xl mx-auto font-sans mb-10">
-      <Header shareText={`Check out Sonar mini app by @moe!\n`} hideMenu primaryActions={<AccountButton />}>
+      <Header shareText={`Check out Hallu by @moe!\n`} hideMenu>
         <BrandSection />
       </Header>
-      <SearchForm />
-      <FeatureGrid />
+
+      <FeedBySlug slug={'/feeds/trending'} />
+      {/* <SearchForm /> */}
+      {/* <FeatureGrid /> */}
     </div>
   )
 }
@@ -80,15 +83,13 @@ function FeatureGrid() {
 
   const links = [
     { title: 'Feeds', Icon: FeedIcon, path: `/feeds` },
-    { title: 'Channels', Icon: ChannelIcon, path: `/channels` },
-    { title: 'Mini Apps', Icon: MiniAppsIcon, path: `/mini-apps` },
-    { title: 'Starter Packs', Icon: StarterPackIcon, path: `/starter-packs` },
-    { title: 'Search', Icon: SearchIcon, path: `/search` },
-    auth?.readAuthenticated && { title: 'Notifications', Icon: NotificationIcon, path: '/notifications' },
-    auth?.readAuthenticated && { title: 'My Profile', Icon: UserIcon, path: `/u/${auth?.username}` },
+    // { title: 'Channels', Icon: ChannelIcon, path: `/channels` },
+    // { title: 'Mini Apps', Icon: MiniAppsIcon, path: `/mini-apps` },
+    // { title: 'Starter Packs', Icon: StarterPackIcon, path: `/starter-packs` },
+    // { title: 'Search', Icon: SearchIcon, path: `/search` },
+    // auth?.readAuthenticated && { title: 'Notifications', Icon: NotificationIcon, path: '/notifications' },
+    // auth?.readAuthenticated && { title: 'My Profile', Icon: UserIcon, path: `/u/${auth?.username}` },
     // !auth?.farcasterMiniApp?.context && { title: 'Account', Icon: AccountIcon, path: '/account' },
-    auth?.farcasterMiniApp?.context && { title: 'Farcaster SDK', Icon: DeveloperIcon, path: '/fc-sdk' },
-    { title: 'Farcaster Stats', Icon: StatsIcon, path: `/fc-stats` },
     // { title: 'Users', Icon: Users, path: `/users` },
     // { title: 'Leaderboard', Icon: Trophy, path: `/leaderboard` },
   ].filter(Boolean) as { title: string; Icon: React.ComponentType<any>; path: string }[]

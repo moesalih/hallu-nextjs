@@ -20,11 +20,12 @@ export default function FeedsScreen() {
 
 function FeedsNav() {
   const auth = useAuth()
-  const [pinnedFeeds] = usePinnedFeeds()
+  // const [pinnedFeeds] = usePinnedFeeds()
+  const pinnedFeeds = ['/feeds/trending']
   const tabs = useMemo(
     () => [
       ...pinnedFeeds.map(feedSlugToTabConfig),
-      auth?.userFid && { Icon: SettingsIcon, id: 'manage', content: <ManagePinnedTabs /> },
+      // auth?.userFid && { Icon: SettingsIcon, id: 'manage', content: <ManagePinnedTabs /> },
     ],
     [pinnedFeeds, auth?.userFid],
   )

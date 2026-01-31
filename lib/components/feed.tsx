@@ -54,8 +54,8 @@ function FeedItems({ feed, display, renderItem, containerClass = 'flex flex-col'
   if (display === 'media') {
     return (
       <div className="grid grid-cols-3 gap-[2px] ">
-        {feed?.map((cast) => (
-          <SmallMediaPost key={cast.hash} cast={cast} />
+        {feed?.map((item) => (
+          <SmallMediaPost key={item.id} cast={item} />
         ))}
       </div>
     )
@@ -63,8 +63,8 @@ function FeedItems({ feed, display, renderItem, containerClass = 'flex flex-col'
 
   return (
     <div className="flex flex-col">
-      {feed?.map((cast) => (
-        <Post key={cast?.hash} cast={cast} />
+      {feed?.map((item) => (
+        <Post key={item?.id} cast={item} />
       ))}
     </div>
   )

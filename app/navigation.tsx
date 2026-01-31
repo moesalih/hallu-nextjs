@@ -21,9 +21,9 @@ export function Navigation({ children }: { children: React.ReactNode }) {
 
   const tabs = [
     { title: 'Feeds', Icon: FeedIcon, path: `/feeds` },
-    { title: 'Channels', Icon: ChannelIcon, path: `/channels` },
-    { title: 'Search', Icon: SearchIcon, path: `/search` },
-    auth?.readAuthenticated && { title: 'Notifications', Icon: DynamicNotificationIcon, path: `/notifications` },
+    // { title: 'Channels', Icon: ChannelIcon, path: `/channels` },
+    // { title: 'Search', Icon: SearchIcon, path: `/search` },
+    // auth?.readAuthenticated && { title: 'Notifications', Icon: DynamicNotificationIcon, path: `/notifications` },
     // auth?.readAuthenticated && { title: 'My Profile', Icon: UserIcon, path: `/u/${auth?.username}` },
     { title: 'Home', Icon: BrandIcon, path: `/` },
   ].filter(Boolean) as { title: string; Icon: React.ComponentType<any>; path: string }[]

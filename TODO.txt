@@ -1,4 +1,2 @@
 remove old code
-cron create image for user
 user feed page
-main feed

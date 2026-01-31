@@ -9,6 +9,7 @@ import { Feed } from '@/lib/components/feed'
 import { ImageIcon, MediaIcon, PostsIcon, TrendingIcon } from '@/lib/components/icons'
 import { useAuth } from '@/lib/providers/auth-provider'
 import { fetchChannelsFeed, fetchExploreFeed, fetchFollowingFeed } from '@/lib/services/neynar'
+import { fetchAllPosts } from '../services/hallu'
 
 export function FeedFromCurrentPath() {
   const pathname = usePathname()
@@ -80,11 +81,7 @@ function FollowingFeed({ display }: { display?: string }) {
 function ExploreFeed({ display }: { display?: string }) {
   const auth = useAuth()
   return (
-    <Feed
-      queryKey={['explore-feed', auth?.userFid]}
-      queryFn={({ pageParam }) => fetchExploreFeed({ cursor: pageParam, viewer_fid: auth?.userFid?.toString() })}
-      display={display}
-    />
+    <Feed queryKey={['explore-feed', auth?.userFid]} queryFn={({ pageParam }) => fetchAllPosts()} display={display} />
   )
 }
 function CuratedFeed({ display }: { display?: string }) {
