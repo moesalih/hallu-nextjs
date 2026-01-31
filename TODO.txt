@@ -1,0 +1,18 @@
+compose form: detect url embeds, fip2 parent url
+compose gifs
+compose: expand from compose sheet to compose page
+channels: owned and moderated
+profile screen
+  link to farcaster profile
+  stats tab (storage, openrank score, fc rewards)
+videos in galleries
+post interactions lists
+bookmarks
+customizable nav
+
+tip
+feed virtualization
+neynar playground
+wrap sdk actions with linking on web
+donate button
+swap

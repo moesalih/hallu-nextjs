@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/cron/dune",
+      "schedule": "0 11 * * *"
+    }
+  ]
+}
