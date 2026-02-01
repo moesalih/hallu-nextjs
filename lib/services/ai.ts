@@ -12,7 +12,7 @@ export async function createText(prompt: string) {
 
 export async function createImage(prompt: string) {
   const { files, warnings } = await generateText({
-    model: google('gemini-3-pro-image-preview'),
+    model: google('gemini-2.5-flash-image'),
     prompt: prompt,
     providerOptions: {
       google: {
