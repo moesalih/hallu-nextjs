@@ -22,7 +22,6 @@ const ACTIVITY_MOMENTS = [
 ]
 
 const PERSPECTIVES = [
-  'behind the scenes',
   'the final result',
   'work in progress',
   'close-up detail',
@@ -30,10 +29,7 @@ const PERSPECTIVES = [
   'over-the-shoulder view',
   'first-person perspective',
   'candid snapshot',
-  'staged composition',
   'action shot',
-  'before and after concept',
-  'process documentation',
   'environment/setting focus',
 ]
 
@@ -86,14 +82,14 @@ const CONTENT_TYPES = [
 
 const userToPostPrompt = `You are creating an image generation prompt for a social media post.
 
-Your task: Generate ONE specific, detailed image prompt that will be passed to an image generation AI.
+Your task: Generate ONE simple, natural image prompt that will be passed to an image generation AI.
 
 Guidelines:
-- Be highly specific and visual in your description
-- Include concrete details about the scene, lighting, composition, and atmosphere
-- Make it unique and creative - avoid generic or overused concepts
-- The prompt should be clear enough for an image AI to render accurately
-- Keep it focused on a single, coherent scene or moment
+- Describe the scene simply and naturally - like you're telling someone what you want to capture
+- Focus on the subject and what's happening, not technical photography details
+- Avoid jargon like "cinematic", "8k", "hyper-realistic", "shallow depth of field", etc.
+- Keep it concise - 2-3 sentences maximum
+- Make it feel authentic and spontaneous, not over-produced
 - Avoid text in the image
 
 Return ONLY the image generation prompt, nothing else.`
@@ -120,7 +116,7 @@ function getTemporalContext(): string {
   const now = new Date()
   const hour = now.getHours()
   const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' })
-  const month = now.toLocaleDateString('en-US', { month: 'long' })
+  const month = now.getMonth()
 
   let timeOfDay = 'day'
   if (hour < 6) timeOfDay = 'late night'
@@ -131,7 +127,14 @@ function getTemporalContext(): string {
 
   const isWeekend = dayOfWeek === 'Saturday' || dayOfWeek === 'Sunday'
 
-  return `It's ${timeOfDay} on a ${isWeekend ? 'weekend' : 'weekday'} ${dayOfWeek} in ${month}.`
+  // Vague seasonal hints instead of specific month names
+  let seasonalHint = ''
+  if (month >= 2 && month <= 4) seasonalHint = 'spring energy'
+  else if (month >= 5 && month <= 7) seasonalHint = 'summer vibes'
+  else if (month >= 8 && month <= 10) seasonalHint = 'autumn atmosphere'
+  else seasonalHint = 'winter mood'
+
+  return `${timeOfDay} on a ${isWeekend ? 'weekend' : 'weekday'}, ${seasonalHint}`
 }
 
 export async function getRandomUserWithPrompt() {
@@ -180,7 +183,7 @@ export interface GeneratePostResult {
   post?: any
   variety: {
     activityMoment: string
-    perspective: string
+    // perspective: string
     mood: string
     // style: string
     contentType: string
@@ -192,7 +195,7 @@ export interface GeneratePostResult {
 export async function generatePost(user: any): Promise<GeneratePostResult> {
   // Generate variety elements
   const activityMoment = getRandomElement(ACTIVITY_MOMENTS)
-  const perspective = getRandomElement(PERSPECTIVES)
+  // const perspective = getRandomElement(PERSPECTIVES)
   const mood = getRandomElement(MOODS)
   // const style = getRandomElement(STYLES)
   const contentType = getRandomElement(CONTENT_TYPES)
@@ -204,14 +207,10 @@ export async function generatePost(user: any): Promise<GeneratePostResult> {
 
 User description: ${user.prompt}
 
-VARIETY REQUIREMENTS (randomization seed: ${randomSeed}):
-- Activity/Moment: ${activityMoment}
-- Visual perspective: ${perspective}
-- Mood/tone: ${mood}
-- Content type: ${contentType}
-- Context: ${temporal}
+SUBTLE INSPIRATION (use as background context, don't explicitly mention):
+Consider capturing a moment like "${activityMoment}" with a ${mood} feeling. The scene should evoke ${contentType}. Setting: ${temporal}.
 
-IMPORTANT: Stay true to the user's profile/interests. Create a post that fits their description while incorporating the variety elements above in a natural way. Make it completely unique - avoid generic or repetitive ideas.`
+IMPORTANT: These are subtle influences to guide variety - NOT a checklist to mention explicitly. Stay true to the user's profile/interests. Create something that feels natural and authentic to their character. Make it completely unique - avoid generic or repetitive ideas.`
 
   const postPrompt = await createText(enhancedUserPrompt, 1.2)
   const url = await generateAndUploadImage(postPrompt)
@@ -219,7 +218,7 @@ IMPORTANT: Stay true to the user's profile/interests. Create a post that fits th
   if (!url) {
     return {
       user,
-      variety: { activityMoment, perspective, mood, contentType, temporal },
+      variety: { activityMoment, mood, contentType, temporal },
       postPrompt,
       error: 'Failed to generate image',
     }
@@ -242,7 +241,7 @@ Write the caption with a ${mood} tone, ${contentType}. Make it authentic and spe
 
   return {
     user,
-    variety: { activityMoment, perspective, mood, contentType, temporal },
+    variety: { activityMoment, mood, contentType, temporal },
     postPrompt,
     url,
     caption,
