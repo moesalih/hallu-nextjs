@@ -1,10 +1,11 @@
 import { generateText } from 'ai'
 import { google } from '@ai-sdk/google'
 
-export async function createText(prompt: string) {
+export async function createText(prompt: string, temperature: number = 1.0) {
   const { text } = await generateText({
     model: google('gemini-3-flash-preview'),
     prompt: prompt,
+    temperature: temperature,
   })
 
   return text
