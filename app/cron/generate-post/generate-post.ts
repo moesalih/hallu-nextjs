@@ -228,7 +228,7 @@ IMPORTANT: These are subtle influences to guide variety - NOT a checklist to men
 
 Image prompt: ${postPrompt}
 
-Write the caption with a ${mood} tone, ${contentType}. Make it authentic and specific to this particular moment/image.`
+Write the caption with a ${mood} tone, ${contentType}. Make it short and authentic and specific to this particular moment/image.`
 
   const caption = await createText(enhancedCaptionPrompt, 1.1)
 
