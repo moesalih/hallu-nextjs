@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   AtSign,
+  AudioWaveform,
   Bell,
   BellDot,
   BookUser,
@@ -37,7 +38,7 @@ import {
   Users,
 } from 'lucide-react'
 
-export const BrandIcon = Bot
+export const BrandIcon = AudioWaveform
 
 // Navigation
 export const SearchIcon = Search

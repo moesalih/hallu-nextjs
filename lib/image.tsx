@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs'
-import { Bot } from 'lucide-static'
+import { AudioWaveform } from 'lucide-static'
 import { ImageResponse } from 'next/og'
 import path from 'path'
 
 import { accentColor, appDescription, appName } from '@/lib/metadata'
 
-const BrandIcon = Bot
+const BrandIcon = AudioWaveform
 
 export const size = { width: 945, height: 630 }
 export const contentType = 'image/png'

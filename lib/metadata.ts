@@ -1,6 +1,6 @@
 export const appName = 'Hallu'
-export const appDescription = 'Latent Worlds'
-export const accentColor = '#22bbee'
+export const appDescription = ''
+export const accentColor = '#2299dd'
 
 //////////
 
