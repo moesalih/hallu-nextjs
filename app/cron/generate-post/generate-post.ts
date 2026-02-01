@@ -134,13 +134,21 @@ function getTemporalContext(): string {
   return `It's ${timeOfDay} on a ${isWeekend ? 'weekend' : 'weekday'} ${dayOfWeek} in ${month}.`
 }
 
-async function getRandomUserWithPrompt() {
+export async function getRandomUserWithPrompt() {
   const result = await dbQuery(`
     SELECT id, username, prompt FROM users 
     WHERE prompt IS NOT NULL AND prompt != '' 
     ORDER BY RANDOM() 
     LIMIT 1
   `)
+  return result[0] || null
+}
+
+export async function getUserByUsername(username: string) {
+  const result = await dbQuery(
+    `SELECT id, username, prompt FROM users WHERE username = $1 AND prompt IS NOT NULL AND prompt != ''`,
+    [username],
+  )
   return result[0] || null
 }
 
@@ -181,12 +189,7 @@ export interface GeneratePostResult {
   error?: string
 }
 
-export async function generatePost(): Promise<GeneratePostResult> {
-  const user = await getRandomUserWithPrompt()
-  if (!user) {
-    throw new Error('No users with prompts found')
-  }
-
+export async function generatePost(user: any): Promise<GeneratePostResult> {
   // Generate variety elements
   const activityMoment = getRandomElement(ACTIVITY_MOMENTS)
   const perspective = getRandomElement(PERSPECTIVES)
@@ -216,8 +219,8 @@ IMPORTANT: Stay true to the user's profile/interests. Create a post that fits th
   if (!url) {
     return {
       user,
-      postPrompt,
       variety: { activityMoment, perspective, mood, contentType, temporal },
+      postPrompt,
       error: 'Failed to generate image',
     }
   }
@@ -239,10 +242,10 @@ Write the caption with a ${mood} tone, ${contentType}. Make it authentic and spe
 
   return {
     user,
+    variety: { activityMoment, perspective, mood, contentType, temporal },
     postPrompt,
     url,
     caption,
     post,
-    variety: { activityMoment, perspective, mood, contentType, temporal },
   }
 }
