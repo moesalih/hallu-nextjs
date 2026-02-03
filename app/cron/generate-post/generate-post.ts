@@ -10,7 +10,7 @@ const ACTIVITY_MOMENTS = [
   'recent achievement or milestone',
   'trying something new',
   'practice session',
-  'preparation or setup',
+  // 'preparation or setup',
   'break or pause moment',
   'focused work time',
   'spontaneous moment',
@@ -129,10 +129,10 @@ function getTemporalContext(): string {
 
   // Vague seasonal hints instead of specific month names
   let seasonalHint = ''
-  if (month >= 2 && month <= 4) seasonalHint = 'spring energy'
-  else if (month >= 5 && month <= 7) seasonalHint = 'summer vibes'
-  else if (month >= 8 && month <= 10) seasonalHint = 'autumn atmosphere'
-  else seasonalHint = 'winter mood'
+  if (month >= 2 && month <= 4) seasonalHint = 'spring '
+  else if (month >= 5 && month <= 7) seasonalHint = 'summer '
+  else if (month >= 8 && month <= 10) seasonalHint = 'autumn '
+  else seasonalHint = 'winter '
 
   return `${timeOfDay} on a ${isWeekend ? 'weekend' : 'weekday'}, ${seasonalHint}`
 }
@@ -187,7 +187,7 @@ export interface GeneratePostResult {
     mood: string
     // style: string
     contentType: string
-    temporal: string
+    // temporal: string
   }
   error?: string
 }
@@ -199,7 +199,7 @@ export async function generatePost(user: any): Promise<GeneratePostResult> {
   const mood = getRandomElement(MOODS)
   // const style = getRandomElement(STYLES)
   const contentType = getRandomElement(CONTENT_TYPES)
-  const temporal = getTemporalContext()
+  // const temporal = getTemporalContext()
   const randomSeed = Math.random().toString(36).substring(2, 8)
 
   // Build enhanced prompt with variety
@@ -207,10 +207,10 @@ export async function generatePost(user: any): Promise<GeneratePostResult> {
 
 User description: ${user.prompt}
 
-SUBTLE INSPIRATION (use as background context, don't explicitly mention):
-Consider capturing a moment like "${activityMoment}" with a ${mood} feeling. The scene should evoke ${contentType}. Setting: ${temporal}.
+Optional creative direction (use lightly if it fits naturally, otherwise ignore):
+Consider a ${mood} moment related to "${activityMoment}".
 
-IMPORTANT: These are subtle influences to guide variety - NOT a checklist to mention explicitly. Stay true to the user's profile/interests. Create something that feels natural and authentic to their character. Make it completely unique - avoid generic or repetitive ideas.`
+CRITICAL: The user's description is what matters most. Only use the creative direction above if it enhances the authenticity. Don't force it. Make each image unique and true to the user's character.`
 
   const postPrompt = await createText(enhancedUserPrompt, 1.2)
   const url = await generateAndUploadImage(postPrompt)
@@ -218,7 +218,7 @@ IMPORTANT: These are subtle influences to guide variety - NOT a checklist to men
   if (!url) {
     return {
       user,
-      variety: { activityMoment, mood, contentType, temporal },
+      variety: { activityMoment, mood, contentType },
       postPrompt,
       error: 'Failed to generate image',
     }
@@ -241,10 +241,8 @@ Write the caption with a ${mood} tone, ${contentType}. Make it short and authent
 
   return {
     user,
-    variety: { activityMoment, mood, contentType, temporal },
+    variety: { activityMoment, mood, contentType },
     postPrompt,
-    url,
-    caption,
     post,
   }
 }
