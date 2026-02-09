@@ -1,5 +1,5 @@
 import { createImage, createText } from '@/lib/services/ai'
-import { uploadFile } from '@/lib/services/supabase-client'
+import { uploadToR2 } from '@/lib/services/r2'
 import { dbQuery } from '@/lib/services/supabase-server'
 
 // Randomization pools for variety
@@ -163,11 +163,10 @@ async function generateAndUploadImage(prompt: string): Promise<string | null> {
     // Generate unique filename
     const timestamp = Date.now()
     const randomId = Math.random().toString(36).substring(2, 10)
-    const filename = `generated/${timestamp}-${randomId}.png`
-    const bucketId = 'post_attachments'
+    const key = `${timestamp}-${randomId}.png`
 
-    // Upload to Supabase storage
-    const publicUrl = await uploadFile(bucketId, filename, imageBuffer)
+    // Upload to Cloudflare R2
+    const publicUrl = await uploadToR2(key, imageBuffer)
     return publicUrl
   } catch (error) {
     console.error('generateAndUploadImage error:', error)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { dbQuery } from '@/lib/services/supabase-server'
-import { supabase } from '@/lib/services/supabase-client'
+import { deleteFromR2 } from '@/lib/services/r2'
 
 export async function GET(request: NextRequest) {
   const username = request.nextUrl.searchParams.get('username')
@@ -19,22 +19,23 @@ export async function GET(request: NextRequest) {
   const posts = await dbQuery('SELECT images FROM posts WHERE user_id = $1', [userId])
   const imageUrls: string[] = posts.flatMap((post: any) => post.images || [])
 
-  // Delete images from storage
+  // Delete images from R2
   let imagesDeleted = 0
   if (imageUrls.length > 0) {
-    const storagePaths = imageUrls
+    const r2Keys = imageUrls
       .map((url: string) => {
-        const match = url.match(/\/post_attachments\/(.+)$/)
+        const match = url.match(/r2\.dev\/(.+)$/)
         return match ? match[1] : null
       })
       .filter(Boolean) as string[]
 
-    if (storagePaths.length > 0) {
-      const { error } = await supabase.storage.from('post_attachments').remove(storagePaths)
-      if (error) {
+    if (r2Keys.length > 0) {
+      try {
+        await deleteFromR2(r2Keys)
+        imagesDeleted = r2Keys.length
+      } catch (error: any) {
         return NextResponse.json({ error: 'failed to delete images', details: error.message }, { status: 500 })
       }
-      imagesDeleted = storagePaths.length
     }
   }
 
