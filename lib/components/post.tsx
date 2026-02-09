@@ -15,7 +15,7 @@ export function Post({ cast, display = 'default', hideSeparator = false }) {
     e.preventDefault()
     e.stopPropagation()
     // fcsdk.actions.viewProfile({ fid: cast?.author?.fid })
-    router.push(`/u/${cast?.author?.username}`)
+    router.push(`/u/${cast?.user?.username}`)
   }
   const viewPost = (e) => {
     if (display == 'expanded') return
@@ -40,10 +40,14 @@ export function Post({ cast, display = 'default', hideSeparator = false }) {
   )
 }
 
+function userDefaultImage(username: string) {
+  return `https://cdn.stamp.fyi/avatar/username--${encodeURIComponent(username)}?s=200`
+}
+
 function PostHeader({ onPress, cast }) {
   return (
     <div className="flex flex-row items-center gap-2 cursor-pointer" onClick={onPress}>
-      {/* <img className="size-8 rounded-full object-cover" src={cast?.user?.pfp_url}></img> */}
+      <img className="size-8 rounded-full object-cover" src={userDefaultImage(cast?.user?.username)} />
       <div className="font-semibold">{cast?.user?.username}</div>
       <div className="text-sm opacity-50" title={formatDateFull(cast?.created_at)}>
         {formatDateRelative(cast?.created_at)}

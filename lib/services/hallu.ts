@@ -6,6 +6,7 @@ export async function fetchAllPosts() {
     .from('posts')
     .select('*,user:users!user_id(username)')
     .order('created_at', { ascending: false })
+    .limit(20)
   console.log('fetchAllPosts:', data, error)
   return defaultPostFeedTransform(data || [])
 }
@@ -16,6 +17,7 @@ export async function fetchUserPosts(username: string) {
     .from('posts')
     .select('*,user:users!user_id(username)')
     .eq('users.username', username)
+    .limit(20)
   console.log('fetchUserPosts:', data, error)
   return defaultPostFeedTransform(data || [])
 }
