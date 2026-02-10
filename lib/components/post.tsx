@@ -4,9 +4,9 @@ import ReactPlayer from 'react-player'
 
 import { ImagesIcon } from '@/lib/components/icons'
 import { LinkedText } from '@/lib/components/LinkedText'
+import { userDefaultImage } from '@/lib/components/misc'
+import { PostInteractions } from '@/lib/components/post-interactions'
 import { formatDateFull, formatDateRelative, trimString } from '@/lib/utils/format'
-
-import { PostInteractions } from './post-interactions'
 
 export function Post({ cast, display = 'default', hideSeparator = false }) {
   const router = useRouter()
@@ -38,10 +38,6 @@ export function Post({ cast, display = 'default', hideSeparator = false }) {
       </div>
     </div>
   )
-}
-
-function userDefaultImage(username: string) {
-  return `https://cdn.stamp.fyi/avatar/username--${encodeURIComponent(username)}?s=200`
 }
 
 function PostHeader({ onPress, cast }) {
@@ -232,7 +228,7 @@ function PostPostedFrom({ cast, display = 'default' }) {
 export function SmallMediaPost({ cast }) {
   const router = useRouter()
   // const [isFullscreen, setIsFullscreen] = useState(false)
-  const images = cast?.embeds?.filter((embed) => !!embed?.metadata?.image)
+  const images = cast.images
   if (!images || !images.length) return null
 
   const toggleFullscreen = (e) => {
@@ -246,11 +242,10 @@ export function SmallMediaPost({ cast }) {
     <div className="w-full relative">
       {images?.slice(0, 1)?.map((image) => (
         <img
-          key={image?.url}
-          src={image?.url}
+          key={image}
+          src={image}
           onClick={toggleFullscreen}
           className={`cursor-pointer ${
-            // deno-lint-ignore no-constant-condition
             false
               ? 'fixed inset-0 w-screen h-screen z-50 object-contain bg-black/90'
               : 'w-full aspect-square object-cover'

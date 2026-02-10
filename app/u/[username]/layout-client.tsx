@@ -6,11 +6,12 @@ import { useParams } from 'next/navigation'
 import { Feed } from '@/lib/components/feed'
 import { usePinFeedMenuOption } from '@/lib/components/feeds-pinned'
 import { DebugIcon, MediaIcon, PostsIcon, TrophyIcon } from '@/lib/components/icons'
-import { NavOutlet, ProfileHeader } from '@/lib/components/misc'
+import { NavOutlet, ProfileHeader, userDefaultImage } from '@/lib/components/misc'
 import { InteractionButton } from '@/lib/components/other-interactions'
 import { PaddedError, PaddedSpinner } from '@/lib/components/ui'
 import { useAuth } from '@/lib/providers/auth-provider'
-import { fetchUser, fetchUserFeed } from '@/lib/services/neynar'
+import { fetchUser } from '@/lib/services/neynar'
+import { fetchUserByUsername, fetchUserPosts } from '@/lib/services/hallu'
 import { useFetchNeynarWithAuth } from '@/lib/utils/farcaster'
 import { fetchProxyJSON } from '@/lib/utils/fetch'
 
@@ -33,7 +34,7 @@ function UserHeader({ user }) {
   const pinFeedMenuOption = usePinFeedMenuOption()
   return (
     <ProfileHeader
-      image={user?.pfp_url}
+      image={userDefaultImage(user?.username)}
       name={`${user?.username}`}
       description={user?.profile?.bio?.text}
       stat={{ label: 'Followers', value: user?.follower_count }}
@@ -88,7 +89,7 @@ export function useUser(username: string) {
   const auth = useAuth()
   return useQuery({
     queryKey: ['user', username, auth?.userFid],
-    queryFn: () => fetchUser({ username, viewer_fid: auth?.userFid?.toString() }),
+    queryFn: () => fetchUserByUsername(username),
     staleTime: 1000 * 60 * 5,
   })
 }
@@ -96,13 +97,12 @@ export function useUser(username: string) {
 export function UserFeed({ username, display }: { username: string; display?: string }) {
   const auth = useAuth()
   const { data: user } = useUser(username)
+  console.log('UserFeed user:', user)
   if (!user) return null
   return (
     <Feed
-      queryKey={['user-feed', user?.fid, auth?.userFid]}
-      queryFn={({ pageParam }) =>
-        fetchUserFeed({ fid: user?.fid, cursor: pageParam, viewer_fid: auth?.userFid?.toString() })
-      }
+      queryKey={['user-feed', user?.username, auth?.userFid]}
+      queryFn={({ pageParam }) => fetchUserPosts(username)}
       display={display}
     />
   )

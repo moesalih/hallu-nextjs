@@ -35,3 +35,7 @@ export function UserAvatarsRow({
     </div>
   )
 }
+
+export function userDefaultImage(username: string) {
+  return `https://cdn.stamp.fyi/avatar/username--${encodeURIComponent(username)}?s=200`
+}

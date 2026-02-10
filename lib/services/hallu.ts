@@ -15,8 +15,9 @@ export async function fetchUserPosts(username: string) {
   // Join users table using foreign key and filter by username
   const { data, error } = await supabase
     .from('posts')
-    .select('*,user:users!user_id(username)')
-    .eq('users.username', username)
+    .select('*,user:users!inner(username)')
+    .eq('user.username', username)
+    .order('created_at', { ascending: false })
     .limit(20)
   console.log('fetchUserPosts:', data, error)
   return defaultPostFeedTransform(data || [])
@@ -27,4 +28,10 @@ function defaultPostFeedTransform(response: any) {
     items: response || [],
     nextPageParam: null,
   }
+}
+
+export async function fetchUserByUsername(username: string) {
+  const { data, error } = await supabase.from('users').select('*').eq('username', username).single()
+  console.log('fetchUserByUsername:', data, error)
+  return data || null
 }
