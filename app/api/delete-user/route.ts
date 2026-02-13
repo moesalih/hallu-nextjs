@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { dbQuery } from '@/lib/services/supabase-server'
+
+import { dbQuery } from '@/lib/services/cloudflare-d1'
 import { deleteFromR2 } from '@/lib/services/cloudflare-r2'
+import { fetchUserByUsername, fetchUserPosts } from '@/lib/services/hallu-server'
 
 export async function GET(request: NextRequest) {
   const username = request.nextUrl.searchParams.get('username')
@@ -8,16 +10,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'username is required' }, { status: 400 })
   }
 
-  // Look up user
-  const users = await dbQuery('SELECT id FROM users WHERE username = $1', [username])
-  if (users.length === 0) {
+  const user = await fetchUserByUsername(username)
+  if (!user) {
     return NextResponse.json({ error: 'user not found' }, { status: 404 })
   }
-  const userId = users[0].id
+  const userId = user.id
 
-  // Fetch all posts to collect image URLs
-  const posts = await dbQuery('SELECT images FROM posts WHERE user_id = $1', [userId])
-  const imageUrls: string[] = posts.flatMap((post: any) => post.images || [])
+  const posts = await fetchUserPosts(username)
+  const imageUrls: string[] = posts.items.flatMap((post: any) => post.images || [])
 
   // Delete images from R2
   let imagesDeleted = 0

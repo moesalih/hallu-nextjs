@@ -1,6 +1,6 @@
 import { createImage, createText } from '@/lib/services/ai'
 import { uploadToR2 } from '@/lib/services/cloudflare-r2'
-import { dbQuery } from '@/lib/services/supabase-server'
+import { dbQuery } from '@/lib/services/cloudflare-d1'
 
 // Randomization pools for variety
 const ACTIVITY_MOMENTS = [
@@ -235,7 +235,7 @@ Write the caption with a ${mood} tone, ${contentType}. Make it short and authent
   const [post] = await dbQuery(`INSERT INTO posts (user_id, text, images) VALUES ($1, $2, $3) RETURNING *`, [
     user.id,
     caption,
-    [url],
+    JSON.stringify([url]),
   ])
 
   return {

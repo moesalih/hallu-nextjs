@@ -1,37 +1,18 @@
-import { supabase } from './supabase-client'
+async function fetchHallu(path: string) {
+  const res = await fetch(path)
+  const json = await res.json()
+  if (!res.ok || !json?.ok) throw new Error(json?.error || 'Failed to fetch hallu data')
+  return json.data
+}
 
 export async function fetchAllPosts() {
-  // Join users table using foreign key and include username
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*,user:users!user_id(username)')
-    .order('created_at', { ascending: false })
-    .limit(20)
-  console.log('fetchAllPosts:', data, error)
-  return defaultPostFeedTransform(data || [])
+  return fetchHallu('/api/hallu/posts')
 }
 
 export async function fetchUserPosts(username: string) {
-  // Join users table using foreign key and filter by username
-  const { data, error } = await supabase
-    .from('posts')
-    .select('*,user:users!inner(username)')
-    .eq('user.username', username)
-    .order('created_at', { ascending: false })
-    .limit(20)
-  console.log('fetchUserPosts:', data, error)
-  return defaultPostFeedTransform(data || [])
-}
-
-function defaultPostFeedTransform(response: any) {
-  return {
-    items: response || [],
-    nextPageParam: null,
-  }
+  return fetchHallu(`/api/hallu/user-posts?username=${encodeURIComponent(username)}`)
 }
 
 export async function fetchUserByUsername(username: string) {
-  const { data, error } = await supabase.from('users').select('*').eq('username', username).single()
-  console.log('fetchUserByUsername:', data, error)
-  return data || null
+  return fetchHallu(`/api/hallu/user?username=${encodeURIComponent(username)}`)
 }
