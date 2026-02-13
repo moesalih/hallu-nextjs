@@ -1,5 +1,5 @@
 import { createImage, createText } from '@/lib/services/ai'
-import { uploadToR2 } from '@/lib/services/r2'
+import { uploadToR2 } from '@/lib/services/cloudflare-r2'
 import { dbQuery } from '@/lib/services/supabase-server'
 
 // Randomization pools for variety

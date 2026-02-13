@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { dbQuery } from '@/lib/services/supabase-server'
-import { deleteFromR2 } from '@/lib/services/r2'
+import { deleteFromR2 } from '@/lib/services/cloudflare-r2'
 
 export async function GET(request: NextRequest) {
   const username = request.nextUrl.searchParams.get('username')
