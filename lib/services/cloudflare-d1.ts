@@ -42,7 +42,6 @@ function normalizeD1Rows(response: any) {
     response?.meta?.changes ??
     response?.changes ??
     (Array.isArray(rows) ? rows.length : 0)
-  console.log('D1 query result count', count)
 
   const normalizedRows = rows
   ;(normalizedRows as any).count = count
@@ -57,7 +56,6 @@ export async function dbQuery(query: string, args: any[] = []) {
     sql,
     params,
   })
-  console.log('🔴 D1 query', JSON.stringify({ sql, params, response }, null, 2))
 
   return normalizeD1Rows(response)
 }
