@@ -9,7 +9,7 @@ import { Feed } from '@/lib/components/feed'
 import { ImageIcon, MediaIcon, PostsIcon, TrendingIcon } from '@/lib/components/icons'
 import { useAuth } from '@/lib/providers/auth-provider'
 import { fetchChannelsFeed, fetchExploreFeed, fetchFollowingFeed } from '@/lib/services/neynar'
-import { fetchAllPosts } from '../services/hallu'
+import { fetchAllPosts } from '@/lib/services/trpc'
 
 export function FeedFromCurrentPath() {
   const pathname = usePathname()

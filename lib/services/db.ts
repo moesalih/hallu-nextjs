@@ -22,16 +22,16 @@ export async function fetchUserPosts(username: string) {
   ).then(defaultPostFeedTransform)
 }
 
+export async function fetchUserByUsername(username: string) {
+  const rows = await dbQuery(`SELECT * FROM users WHERE username = $1 LIMIT 1`, [username])
+  return rows[0] || null
+}
+
 function defaultPostFeedTransform(response: any) {
   return {
     items: response?.map(transformPostRow) || [],
     nextPageParam: null,
   }
-}
-
-export async function fetchUserByUsername(username: string) {
-  const rows = await dbQuery(`SELECT * FROM users WHERE username = $1 LIMIT 1`, [username])
-  return rows[0] || null
 }
 
 function transformPostRow(row: any) {

@@ -1,6 +1,5 @@
 # AGENTS.md
 
-
 ## Project Overview
 
 hallu
@@ -9,10 +8,12 @@ ai generated social network prototype
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 + React 19 (App Router)
+- **Framework**: Next.js 16 (App Router) + React 19 
 - **Styling**: Tailwind CSS v4 + @pigment-css/react
 - **Icons**: Lucide React
-- **Backend**: Supabase for db, Cloudflare R2 for media storage
+- **API**: tRPC
+- **DB**: Cloudflare D1
+- **File Storage**: Cloudflare R2
 
 ## Commands
 
@@ -25,11 +26,14 @@ ai generated social network prototype
 
 ## Project Structure
 
-- `/app` - Next.js pages (App Router)
+- `/app` - Next.js (App Router)
+  - `api/trpc/[trpc]/route.ts` - tRPC handlers
 - `/lib/components` - React components
 - `/lib/services` - API layer
-  - `supabase-*.ts` - Supabase clients
+  - `cloudflare-d1.ts` - Cloudflare D1 client (backend)
   - `cloudflare-r2.ts` - Cloudflare R2 client (backend)
+  - `db.ts` - Database queries (backend)
+  - `trpc.ts` - tRPC client (frontend)
 - `/lib/providers` - React contexts
   - `auth-provider.tsx` - Auth (uses @neynar/react only for auth button/context)
 - `/lib/utils` - Utilities

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { dbQuery } from '@/lib/services/cloudflare-d1'
 import { deleteFromR2 } from '@/lib/services/cloudflare-r2'
-import { fetchUserByUsername, fetchUserPosts } from '@/lib/services/hallu-server'
+import { fetchUserByUsername, fetchUserPosts } from '@/lib/services/db'
 
 export async function GET(request: NextRequest) {
   const username = request.nextUrl.searchParams.get('username')
