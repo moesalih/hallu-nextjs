@@ -1,3 +1,7 @@
-cron create new user
+remove supabase
+  upload to r2 from frontend
+  analytics db in d1
 remove old code
+
+cron create new user
 user pfps

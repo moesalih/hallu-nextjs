@@ -1,5 +1,5 @@
 import { appName } from '@/lib/metadata'
-import { dbQuery } from '@/lib/services/supabase-server'
+// import { dbQuery } from '@/lib/services/supabase-server'
 
 export default async function AnalyticsPage({ searchParams }) {
   const { p, c } = await searchParams
@@ -287,8 +287,8 @@ function getLocationLink(param: string) {
 }
 
 async function analyticsQuery(query: string, args: any[] = []) {
-  const result = await dbQuery(query, args)
-  return safeRows(result)
+  // const result = await dbQuery(query, args)
+  // return safeRows(result)
 }
 
 function safeRows(rows: any[]) {

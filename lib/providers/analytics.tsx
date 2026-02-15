@@ -2,13 +2,13 @@ import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { useAuth } from '@/lib/providers/auth-provider'
-import { sendAnalyticsEvent } from '@/lib/services/supabase-client'
+// import { sendAnalyticsEvent } from '@/lib/services/supabase-client'
 
 export const Analytics = ({}) => {
   const auth = useAuth()
 
   const analyticsEvent = (event: string, param?: string) => {
-    return sendAnalyticsEvent({ event, param, fid: auth?.userFid, platform: auth?.platform })
+    // return sendAnalyticsEvent({ event, param, fid: auth?.userFid, platform: auth?.platform })
   }
 
   useEffect(() => {

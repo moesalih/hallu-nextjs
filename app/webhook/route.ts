@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { appUrl, appName } from '@/lib/metadata'
-import { saveUserNotificationsDetails, sendNotificationToUser } from '@/lib/services/farcaster-notifications'
+// import { saveUserNotificationsDetails, sendNotificationToUser } from '@/lib/services/farcaster-notifications'
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
@@ -18,9 +18,9 @@ export async function POST(request: NextRequest) {
   console.log('[miniapp-webhook]', header, payload)
 
   if ((event === 'frame_added' || event === 'notifications_enabled') && payload?.notificationDetails) {
-    await saveUserNotificationsDetails(fid, payload?.notificationDetails)
-    const res = await sendWelcomeNotification(fid, appUrl)
-    console.log('[miniapp-webhook]', res)
+    // await saveUserNotificationsDetails(fid, payload?.notificationDetails)
+    // const res = await sendWelcomeNotification(fid, appUrl)
+    // console.log('[miniapp-webhook]', res)
     // saveUserNotificationsDetails(fid, payload?.notificationDetails)
     //   .then(() => sendWelcomeNotification(fid, appUrl))
     //   .then((res) => {
@@ -37,9 +37,9 @@ export async function POST(request: NextRequest) {
 const decodeBase64Json = (str: string) => JSON.parse(Buffer.from(str, 'base64').toString('utf-8'))
 
 async function sendWelcomeNotification(fid: number, baseUrl: string) {
-  return await sendNotificationToUser(fid, {
-    title: appName + ' installed!',
-    body: '🚀🚀🚀🚀🚀',
-    targetUrl: baseUrl,
-  })
+  // return await sendNotificationToUser(fid, {
+  //   title: appName + ' installed!',
+  //   body: '🚀🚀🚀🚀🚀',
+  //   targetUrl: baseUrl,
+  // })
 }

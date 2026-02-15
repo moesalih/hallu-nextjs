@@ -5,17 +5,12 @@ const baseUrl = 'https://api.cloudflare.com/client/v4'
 function getD1RawUrl() {
   const accountId = process.env.D1_ACCOUNT_ID || ''
   const databaseId = process.env.D1_DATABASE_ID || ''
-
-  if (!accountId || !databaseId) {
-    throw new Error('Missing D1_ACCOUNT_ID or D1_DATABASE_ID')
-  }
-
+  if (!accountId || !databaseId) throw new Error('Missing D1_ACCOUNT_ID or D1_DATABASE_ID')
   return `${baseUrl}/accounts/${accountId}/d1/database/${databaseId}/query`
 }
 
 function toD1SqlAndParams(query: string, args: any[] = []) {
   const refs = [...query.matchAll(/\$(\d+)/g)]
-
   if (refs.length === 0) {
     return { sql: query, params: args }
   }
@@ -24,9 +19,7 @@ function toD1SqlAndParams(query: string, args: any[] = []) {
     const position = Number(match[1]) - 1
     return args[position]
   })
-
   const sql = query.replace(/\$(\d+)/g, '?')
-
   return { sql, params }
 }
 
@@ -51,11 +44,6 @@ function normalizeD1Rows(response: any) {
 
 export async function dbQuery(query: string, args: any[] = []) {
   const { sql, params } = toD1SqlAndParams(query, args)
-
-  const response = await fetchDirectOrProxyJSON(getD1RawUrl(), 'POST', {
-    sql,
-    params,
-  })
-
+  const response = await fetchDirectOrProxyJSON(getD1RawUrl(), 'POST', { sql, params })
   return normalizeD1Rows(response)
 }

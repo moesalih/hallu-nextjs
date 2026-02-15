@@ -1,36 +1,30 @@
 import { dbQuery } from './cloudflare-d1'
 
 export async function fetchAllPosts() {
-  const rows = await dbQuery(
+  return await dbQuery(
     `SELECT posts.*, users.username AS user_username
      FROM posts
      LEFT JOIN users ON users.id = posts.user_id
      ORDER BY posts.created_at DESC
      LIMIT 20`,
-  )
-
-  const data = rows.map(transformPostRow)
-  return defaultPostFeedTransform(data)
+  ).then(defaultPostFeedTransform)
 }
 
 export async function fetchUserPosts(username: string) {
-  const rows = await dbQuery(
+  return await dbQuery(
     `SELECT posts.*, users.username AS user_username
      FROM posts
      INNER JOIN users ON users.id = posts.user_id
      WHERE users.username = $1
      ORDER BY posts.created_at DESC
-     LIMIT 100`,
+     LIMIT 20`,
     [username],
-  )
-
-  const data = rows.map(transformPostRow)
-  return defaultPostFeedTransform(data)
+  ).then(defaultPostFeedTransform)
 }
 
 function defaultPostFeedTransform(response: any) {
   return {
-    items: response || [],
+    items: response?.map(transformPostRow) || [],
     nextPageParam: null,
   }
 }
