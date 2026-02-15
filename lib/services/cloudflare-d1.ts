@@ -37,7 +37,7 @@ function normalizeD1Rows(response: any) {
     (Array.isArray(rows) ? rows.length : 0)
 
   const normalizedRows = rows
-  ;(normalizedRows as any).count = count
+  if (normalizedRows) (normalizedRows as any).count = count
 
   return normalizedRows
 }
@@ -45,5 +45,6 @@ function normalizeD1Rows(response: any) {
 export async function dbQuery(query: string, args: any[] = []) {
   const { sql, params } = toD1SqlAndParams(query, args)
   const response = await fetchDirectOrProxyJSON(getD1RawUrl(), 'POST', { sql, params })
+  // console.log('D1 query response', JSON.stringify(response, null, 2))
   return normalizeD1Rows(response)
 }
