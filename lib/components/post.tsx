@@ -21,7 +21,8 @@ export function Post({ cast, display = 'default', hideSeparator = false }) {
     if (display == 'expanded') return
     e.preventDefault()
     e.stopPropagation()
-    router.push(`/p/${cast?.hash}`)
+    // router.push(`/p/${cast?.id}`)
+    router.push(`/u/${cast?.user?.username}`)
   }
 
   return (
@@ -202,7 +203,7 @@ const PostQuoteEmbed = ({ cast, display = 'default' }) => {
 
   if (!cast.embeds?.length) return null
   const quotedPost = cast.embeds?.find((embed) => !!embed.cast)?.cast
-  if (!quotedPost || !quotedPost.hash) return null
+  if (!quotedPost || !quotedPost.id) return null
   // console.log('quotedPost', quotedPost)
 
   return <QuotedPost cast={quotedPost} />
@@ -235,7 +236,8 @@ export function SmallMediaPost({ cast }) {
     e.preventDefault()
     e.stopPropagation()
     // setIsFullscreen(!isFullscreen)
-    router.push(`/p/${cast.hash}`)
+    // router.push(`/p/${cast.id}`)
+    router.push(`/u/${cast?.user?.username}`)
   }
 
   return (

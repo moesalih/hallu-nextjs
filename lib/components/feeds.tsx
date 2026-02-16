@@ -21,7 +21,7 @@ export function FeedBySlug({ slug }: { slug: string }) {
   const display = slug.endsWith('/media') ? 'media' : undefined
 
   if (slug.startsWith('/feeds/following')) return <FollowingFeed display={display} />
-  if (slug.startsWith('/feeds/trending')) return <ExploreFeed display={display} />
+  if (slug.startsWith('/feeds/explore')) return <ExploreFeed display={display} />
   if (slug.startsWith('/feeds/curated')) return <CuratedFeed display={display} />
   if (slug.startsWith('/c/')) return <ChannelFeed channelId={feedSlugToChannelId(slug)!} display={display} />
   if (slug.startsWith('/u/')) return <UserFeed username={feedSlugToUsername(slug)!} display={display} />
@@ -32,7 +32,7 @@ export function FeedBySlug({ slug }: { slug: string }) {
 
 export function feedSlugToTitle(slug: string) {
   if (slug.startsWith('/feeds/following')) return 'Following'
-  if (slug.startsWith('/feeds/trending')) return 'Trending'
+  if (slug.startsWith('/feeds/explore')) return 'Trending'
   if (slug.startsWith('/feeds/curated/media')) return 'Curated Media'
   if (slug.startsWith('/c/')) return `/${feedSlugToChannelId(slug)}`
   if (slug.startsWith('/u/')) return `@${feedSlugToUsername(slug)}`
@@ -42,7 +42,8 @@ export function feedSlugToTitle(slug: string) {
 
 export function feedSlugToIcon(slug: string) {
   if (slug.startsWith('/feeds/following')) return PostsIcon
-  if (slug.startsWith('/feeds/trending')) return TrendingIcon
+  if (slug.startsWith('/feeds/explore/media')) return MediaIcon
+  if (slug.startsWith('/feeds/explore')) return TrendingIcon
   if (slug.startsWith('/feeds/curated')) return ImageIcon
 
   if (slug.endsWith('/media')) return MediaIcon

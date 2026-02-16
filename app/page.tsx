@@ -32,7 +32,7 @@ export default function Home() {
         <BrandSection />
       </Header>
 
-      <FeedBySlug slug={'/feeds/trending'} />
+      <FeedBySlug slug={'/feeds/explore/media'} />
       {/* <SearchForm /> */}
       {/* <FeatureGrid /> */}
     </div>

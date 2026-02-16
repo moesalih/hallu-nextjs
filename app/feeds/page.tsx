@@ -21,7 +21,7 @@ export default function FeedsScreen() {
 function FeedsNav() {
   const auth = useAuth()
   // const [pinnedFeeds] = usePinnedFeeds()
-  const pinnedFeeds = ['/feeds/trending']
+  const pinnedFeeds = ['/feeds/explore', '/feeds/explore/media']
   const tabs = useMemo(
     () => [
       ...pinnedFeeds.map(feedSlugToTabConfig),

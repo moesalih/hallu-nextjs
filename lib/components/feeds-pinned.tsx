@@ -30,7 +30,7 @@ export function usePinFeedMenuOption() {
   }, [pathname, pinnedFeeds, auth?.userFid])
 }
 
-const DEFAULT_FEEDS = ['/feeds/following', '/feeds/trending', '/feeds/curated/media']
+const DEFAULT_FEEDS = ['/feeds/following', '/feeds/explore', '/feeds/curated/media']
 
 export function usePinnedFeeds() {
   const auth = useAuth()
