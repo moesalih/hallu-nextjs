@@ -138,20 +138,22 @@ function getTemporalContext(): string {
 }
 
 export async function getRandomUserWithPrompt() {
-  const result = await dbQuery(`
+  const result = await dbQuery({
+    sql: `
     SELECT id, username, prompt FROM users 
     WHERE prompt IS NOT NULL AND prompt != '' 
     ORDER BY RANDOM() 
     LIMIT 1
-  `)
+  `,
+  })
   return result[0] || null
 }
 
 export async function getUserByUsername(username: string) {
-  const result = await dbQuery(
-    `SELECT id, username, prompt FROM users WHERE username = $1 AND prompt IS NOT NULL AND prompt != ''`,
-    [username],
-  )
+  const result = await dbQuery({
+    sql: `SELECT id, username, prompt FROM users WHERE username = $1 AND prompt IS NOT NULL AND prompt != ''`,
+    params: [username],
+  })
   return result[0] || null
 }
 
@@ -231,11 +233,10 @@ Write the caption with a ${mood} tone, ${contentType}. Make it short and authent
   const caption = await createText(enhancedCaptionPrompt, 1.1)
 
   // Create the post in the database
-  const [post] = await dbQuery(`INSERT INTO posts (user_id, text, images) VALUES ($1, $2, $3) RETURNING *`, [
-    user.id,
-    caption,
-    JSON.stringify([url]),
-  ])
+  const [post] = await dbQuery({
+    sql: `INSERT INTO posts (user_id, text, images) VALUES ($1, $2, $3) RETURNING *`,
+    params: [user.id, caption, JSON.stringify([url])],
+  })
 
   return {
     user,

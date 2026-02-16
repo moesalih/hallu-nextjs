@@ -40,10 +40,10 @@ export async function GET(request: NextRequest) {
   }
 
   // Delete all posts
-  const deletedPosts = await dbQuery('DELETE FROM posts WHERE user_id = $1', [userId])
+  const deletedPosts = await dbQuery({ sql: 'DELETE FROM posts WHERE user_id = $1', params: [userId] })
 
   // Delete the user
-  await dbQuery('DELETE FROM users WHERE id = $1', [userId])
+  await dbQuery({ sql: 'DELETE FROM users WHERE id = $1', params: [userId] })
 
   return NextResponse.json({
     deleted: {

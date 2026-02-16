@@ -22,7 +22,7 @@ export default function FarcasterMiniApp() {
   const [pattern, setPattern] = useState('')
   const [customEmbedUrl, setCustomEmbedUrl] = useState('')
 
-  console.log(fcsdk, context, walletAddresses)
+  // console.log(fcsdk, context, walletAddresses)
 
   return (
     <div>

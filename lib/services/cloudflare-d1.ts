@@ -42,9 +42,9 @@ function normalizeD1Rows(response: any) {
   return normalizedRows
 }
 
-export async function dbQuery(query: string, args: any[] = []) {
-  const { sql, params } = toD1SqlAndParams(query, args)
-  const response = await fetchDirectOrProxyJSON(getD1RawUrl(), 'POST', { sql, params })
+export async function dbQuery({ sql, params }: { sql: string; params?: any[] }) {
+  const d1Query = toD1SqlAndParams(sql, params)
+  const response = await fetchDirectOrProxyJSON(getD1RawUrl(), 'POST', d1Query)
   // console.log('D1 query response', JSON.stringify(response, null, 2))
   return normalizeD1Rows(response)
 }

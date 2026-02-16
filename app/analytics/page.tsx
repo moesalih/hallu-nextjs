@@ -314,8 +314,8 @@ function getLocationLink(param: string) {
   return ''
 }
 
-async function analyticsQuery(query: string, args: any[] = []) {
-  const result = await dbQuery(query, args)
+async function analyticsQuery(sql: string, params: any[] = []) {
+  const result = await dbQuery({ sql, params })
   return safeRows(result)
 }
 

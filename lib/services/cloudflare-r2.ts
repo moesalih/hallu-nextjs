@@ -4,8 +4,8 @@ const R2_PUBLIC_URL = 'https://pub-0e517429b0af4690824dd1c28dc67723.r2.dev'
 const R2_BUCKET_NAME = 'hallu-post-attachments'
 
 const r2 = new AwsClient({
-  accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+  accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+  secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
 })
 
 function r2Url(key: string) {

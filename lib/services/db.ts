@@ -1,43 +1,74 @@
-import { dbQuery } from './cloudflare-d1'
+import { eq, getTableColumns, sql } from 'drizzle-orm'
+import { int, QueryBuilder, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-export async function fetchAllPosts() {
-  return await dbQuery(
-    `SELECT posts.*, users.username AS user_username
-     FROM posts
-     INNER JOIN users ON users.id = posts.user_id
-     ORDER BY posts.created_at DESC
-     LIMIT 20`,
-  ).then(defaultPostFeedTransform)
-}
+import { dbQuery } from '@/lib/services/cloudflare-d1'
 
-export async function fetchUserPosts({ username }: { username: string }) {
-  return await dbQuery(
-    `SELECT posts.*, users.username AS user_username
-     FROM posts
-     INNER JOIN users ON users.id = posts.user_id
-     WHERE users.username = $1
-     ORDER BY posts.created_at DESC
-     LIMIT 20`,
-    [username],
-  ).then(defaultPostFeedTransform)
-}
+const defaultCreatedAt = sql`strftime('%Y-%m-%d %H:%M:%f+00', CURRENT_TIMESTAMP)`
 
-export async function fetchUserByUsername({ username }: { username: string }) {
-  const rows = await dbQuery(`SELECT * FROM users WHERE username = ? LIMIT 1`, [username])
-  return rows[0] || null
-}
+// const analytics_events = sqliteTable('analytics_events', {
+//   id: int('id').primaryKey({ autoIncrement: true }),
+//   created_at: text('created_at').notNull().default(defaultCreatedAt),
+//   event: text('event').notNull(),
+//   param: text('param'),
+//   fid: int('fid'),
+//   platform: text('platform'),
+// })
+
+const users = sqliteTable('users', {
+  id: int('id').primaryKey({ autoIncrement: true }),
+  created_at: text('created_at').notNull().default(defaultCreatedAt),
+  username: text('username'),
+  prompt: text('prompt'),
+})
+
+const posts = sqliteTable('posts', {
+  id: text('id')
+    .primaryKey()
+    .default(sql`lower(hex(randomblob(16)))`),
+  created_at: text('created_at').notNull().default(defaultCreatedAt),
+  user_id: int('user_id')
+    .notNull()
+    .references(() => users.id),
+  text: text('text'),
+  images: text('images'),
+})
+
+const qb = new QueryBuilder()
+
+//////////
 
 type AnalyticsEvent = { event: string; param?: string; fid?: number; platform?: string }
 export async function sendAnalyticsEvent({ event, param, fid, platform }: AnalyticsEvent) {
-  return await dbQuery(`INSERT INTO analytics_events (event, param, fid, platform) VALUES (?, ?, ?, ?)`, [
-    event,
-    param ?? null,
-    fid ?? null,
-    platform ?? null,
-  ])
+  return await dbQuery({
+    sql: `INSERT INTO analytics_events (event, param, fid, platform) VALUES (?, ?, ?, ?)`,
+    params: [event, param ?? null, fid ?? null, platform ?? null],
+  })
 }
 
-function defaultPostFeedTransform(response: any) {
+const postsWithUsers = qb
+  .select({
+    ...getTableColumns(posts),
+    user_username: sql`${users.username}`.as('user_username'),
+  })
+  .from(posts)
+  .innerJoin(users, eq(users.id, posts.user_id))
+  .orderBy(sql`${posts.created_at} DESC`)
+  .limit(20)
+
+export async function fetchAllPosts() {
+  return await dbQuery(postsWithUsers.toSQL()).then(postFeedTransform)
+}
+
+export async function fetchUserPosts({ username }: { username: string }) {
+  return await dbQuery(postsWithUsers.where(eq(users.username, username)).toSQL()).then(postFeedTransform)
+}
+
+export async function fetchUserByUsername({ username }: { username: string }) {
+  const rows = await dbQuery(qb.select().from(users).where(eq(users.username, username)).limit(1).toSQL())
+  return rows[0] || null
+}
+
+function postFeedTransform(response: any) {
   return {
     items: response?.map(transformPostRow) || [],
     nextPageParam: null,

@@ -10,6 +10,6 @@ const sqlCreateTableAnalyticsEvents = `CREATE TABLE IF NOT EXISTS analytics_even
 )`
 
 export async function GET(request: Request) {
-  const result = await dbQuery(sqlCreateTableAnalyticsEvents)
+  const result = await dbQuery({ sql: sqlCreateTableAnalyticsEvents })
   return Response.json({ result })
 }
