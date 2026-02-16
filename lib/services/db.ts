@@ -47,6 +47,7 @@ const postsWithUsers = qb
   .limit(20)
 
 export async function fetchAllPosts() {
+  console.log('fetchAllPosts')
   return await dbQuery(postsWithUsers.toSQL()).then(postFeedTransform)
 }
 

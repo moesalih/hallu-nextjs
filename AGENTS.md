@@ -9,11 +9,11 @@ ai generated social network prototype
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router) + React 19 
-- **Styling**: Tailwind CSS v4 + @pigment-css/react
-- **Icons**: Lucide React
-- **API**: tRPC
 - **DB**: Cloudflare D1
 - **File Storage**: Cloudflare R2
+- **API**: tRPC + Tanstack React Query
+- **Styling**: Tailwind CSS v4 + @pigment-css/react
+- **Icons**: Lucide React
 
 ## Commands
 
@@ -42,6 +42,7 @@ ai generated social network prototype
 
 - TypeScript for all code
 - Clean, minimal, organized code. each component/func should have a single responsibility.
+- Minimize lines of code for readability. Don't be over-verbose.
 - Server components by default, `'use client'` for interactivity
 - Use `fetchDirectOrProxyJSON()` utility for API calls
 
