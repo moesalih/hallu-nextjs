@@ -10,7 +10,7 @@ import { NavOutlet, ProfileHeader, userDefaultImage } from '@/lib/components/mis
 import { InteractionButton } from '@/lib/components/other-interactions'
 import { PaddedError, PaddedSpinner } from '@/lib/components/ui'
 import { useAuth } from '@/lib/providers/auth-provider'
-import { fetchUserByUsername, fetchUserPosts } from '@/lib/services/trpc'
+import { fetchUserByUsername, fetchUserPosts } from '@/lib/services/trpc-client'
 import { useFetchNeynarWithAuth } from '@/lib/utils/farcaster'
 import { fetchProxyJSON } from '@/lib/utils/fetch'
 

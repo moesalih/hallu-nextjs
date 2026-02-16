@@ -1,5 +1,3 @@
-remove supabase
-  analytics db in d1
 remove old code
 
 cron create new user

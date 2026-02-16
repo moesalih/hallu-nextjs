@@ -5,7 +5,7 @@ import { usePost } from '@/app/p/[hash]/layout'
 import { ImageIcon } from '@/lib/components/icons'
 import { QuotedPost } from '@/lib/components/post'
 import { Button, TextArea } from '@/lib/components/ui'
-import { uploadFile } from '@/lib/services/trpc'
+import { uploadFile } from '@/lib/services/trpc-client'
 import { useFetchNeynarWithAuth } from '@/lib/utils/farcaster'
 
 export function ComposeForm({

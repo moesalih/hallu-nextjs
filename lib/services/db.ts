@@ -27,6 +27,16 @@ export async function fetchUserByUsername({ username }: { username: string }) {
   return rows[0] || null
 }
 
+type AnalyticsEvent = { event: string; param?: string; fid?: number; platform?: string }
+export async function sendAnalyticsEvent({ event, param, fid, platform }: AnalyticsEvent) {
+  return await dbQuery(`INSERT INTO analytics_events (event, param, fid, platform) VALUES (?, ?, ?, ?)`, [
+    event,
+    param ?? null,
+    fid ?? null,
+    platform ?? null,
+  ])
+}
+
 function defaultPostFeedTransform(response: any) {
   return {
     items: response?.map(transformPostRow) || [],

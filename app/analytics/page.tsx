@@ -1,5 +1,5 @@
 import { appName } from '@/lib/metadata'
-// import { dbQuery } from '@/lib/services/supabase-server'
+import { dbQuery } from '@/lib/services/cloudflare-d1'
 
 export default async function AnalyticsPage({ searchParams }) {
   const { p, c } = await searchParams
@@ -25,13 +25,13 @@ async function Dashboard({ period = 'week', countOn = '*' }) {
         <div className="flex flex-row">
           <Table data={await countUsersByInterval({})} title="DAU" props={['interval', 'count']} w={w / 3} />
           <Table
-            data={await countUsersByInterval({ intervalFormat: 'IYYY-"W"IW' })}
+            data={await countUsersByInterval({ interval: 'week' })}
             title="WAU"
             props={['interval', 'count']}
             w={w / 3}
           />
           <Table
-            data={await countUsersByInterval({ intervalFormat: 'YYYY-MM' })}
+            data={await countUsersByInterval({ interval: 'month' })}
             title="MAU"
             props={['interval', 'count']}
             w={w / 3}
@@ -140,59 +140,87 @@ function Spacer({ w }) {
   )
 }
 
-function countUsersByInterval({ intervalFormat = 'YYYY-MM-DD' }) {
+function countUsersByInterval({ interval = 'day' }: { interval?: 'day' | 'week' | 'month' }) {
+  const intervalExpr = getIntervalExpression(interval)
   return analyticsQuery(`
-  select TO_CHAR(created_at, '${intervalFormat}') as interval, COUNT(distinct fid)
+  select ${intervalExpr} as interval, COUNT(distinct fid) as count
   from analytics_events
-  where created_at >= NOW() - INTERVAL '1 year'
+  where substr(created_at, 1, 19) >= datetime('now', '-1 year')
   group by interval
   order by interval desc
   limit 10`)
 }
 function topOpenLocations({ period = 'week', countOn = '*' }) {
+  const periodModifier = getPeriodModifier(period)
+  const countExpression = getCountExpression(countOn)
   return analyticsQuery(`
-  select param, COUNT(${countOn})
+  select param, COUNT(${countExpression}) as count
   from analytics_events
-  where created_at >= NOW() - INTERVAL '1 ${period}' and event = 'miniapp_open'
+  where substr(created_at, 1, 19) >= datetime('now', '${periodModifier}') and event = 'miniapp_open'
   group by param
   order by count desc
   limit 10`).then(miniappLocationDataTransformer)
 }
 function topClients({ period = 'week', countOn = '*' }) {
+  const periodModifier = getPeriodModifier(period)
+  const countExpression = getCountExpression(countOn)
   return analyticsQuery(`
-  select param, COUNT(${countOn})
+  select param, COUNT(${countExpression}) as count
   from analytics_events
-  where created_at >= NOW() - INTERVAL '1 ${period}' and event = 'miniapp_open'
+  where substr(created_at, 1, 19) >= datetime('now', '${periodModifier}') and event = 'miniapp_open'
   group by param
   order by count desc
   limit 500`).then(miniappClientDataTransformer)
 }
 function topScreens({ period = 'week', countOn = '*' }) {
+  const periodModifier = getPeriodModifier(period)
+  const countExpression = getCountExpression(countOn)
   return analyticsQuery(`
-  select param, COUNT(${countOn})
+  select param, COUNT(${countExpression}) as count
   from analytics_events
-  where created_at >= NOW() - INTERVAL '1 ${period}' and event = 'screen_view'
+  where substr(created_at, 1, 19) >= datetime('now', '${periodModifier}') and event = 'screen_view'
   group by param
   order by count desc
   limit 10`).then(screenDataTransformer)
 }
 function topUsers({ period = 'week' }) {
+  const periodModifier = getPeriodModifier(period)
   return analyticsQuery(`
-  select fid, COUNT(*)
+  select fid, COUNT(*) as count
   from analytics_events
-  where created_at >= NOW() - INTERVAL '1 ${period}'
+  where substr(created_at, 1, 19) >= datetime('now', '${periodModifier}')
   group by fid
   order by count desc
   limit 10`).then(userDataTransformer)
 }
 function topPlatforms({ period = 'week', countOn = '*' }) {
+  const periodModifier = getPeriodModifier(period)
+  const countExpression = getCountExpression(countOn)
   return analyticsQuery(`
-  select platform, COUNT(${countOn})
+  select platform, COUNT(${countExpression}) as count
   from analytics_events
-  where created_at >= NOW() - INTERVAL '1 ${period}'
+  where substr(created_at, 1, 19) >= datetime('now', '${periodModifier}')
   group by platform
   order by count desc
   limit 10`)
+}
+
+function getIntervalExpression(interval: 'day' | 'week' | 'month') {
+  if (interval === 'week') return `strftime('%Y-W%W', substr(created_at, 1, 19))`
+  if (interval === 'month') return `substr(created_at, 1, 7)`
+  return `substr(created_at, 1, 10)`
+}
+
+function getPeriodModifier(period: string) {
+  if (period === 'day') return '-1 day'
+  if (period === 'month') return '-1 month'
+  if (period === 'year') return '-1 year'
+  return '-7 day'
+}
+
+function getCountExpression(countOn: string) {
+  if (countOn === 'distinct fid') return 'distinct fid'
+  return '*'
 }
 
 function screenDataTransformer(data: any) {
@@ -287,12 +315,12 @@ function getLocationLink(param: string) {
 }
 
 async function analyticsQuery(query: string, args: any[] = []) {
-  // const result = await dbQuery(query, args)
-  // return safeRows(result)
+  const result = await dbQuery(query, args)
+  return safeRows(result)
 }
 
 function safeRows(rows: any[]) {
-  return rows.map((row) => {
+  return rows?.map((row) => {
     const newRow: Record<string, any> = {}
     for (const key in row) {
       if (typeof row[key] === 'bigint') {
