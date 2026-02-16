@@ -14,7 +14,6 @@
     "@farcaster/miniapp-wagmi-connector": "^1.1.0",
     "@neynar/react": "^1.2.22",
     "@pigment-css/react": "^0.0.30",
-    "@supabase/supabase-js": "^2.79.0",
     "@tanstack/react-query": "^5.90.6",
     "@trpc/client": "^11.10.0",
     "@trpc/server": "^11.10.0",

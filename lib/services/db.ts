@@ -1,18 +1,9 @@
-import { eq, getTableColumns, sql } from 'drizzle-orm'
+import { desc, eq, getTableColumns, sql } from 'drizzle-orm'
 import { int, QueryBuilder, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { dbQuery } from '@/lib/services/cloudflare-d1'
 
 const defaultCreatedAt = sql`strftime('%Y-%m-%d %H:%M:%f+00', CURRENT_TIMESTAMP)`
-
-// const analytics_events = sqliteTable('analytics_events', {
-//   id: int('id').primaryKey({ autoIncrement: true }),
-//   created_at: text('created_at').notNull().default(defaultCreatedAt),
-//   event: text('event').notNull(),
-//   param: text('param'),
-//   fid: int('fid'),
-//   platform: text('platform'),
-// })
 
 const users = sqliteTable('users', {
   id: int('id').primaryKey({ autoIncrement: true }),
@@ -52,7 +43,7 @@ const postsWithUsers = qb
   })
   .from(posts)
   .innerJoin(users, eq(users.id, posts.user_id))
-  .orderBy(sql`${posts.created_at} DESC`)
+  .orderBy(desc(posts.created_at))
   .limit(20)
 
 export async function fetchAllPosts() {
