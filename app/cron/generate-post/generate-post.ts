@@ -161,9 +161,8 @@ async function generateAndUploadImage(prompt: string): Promise<string | null> {
     const imageBuffer = Buffer.from(base64, 'base64')
 
     // Generate unique filename
-    const timestamp = Date.now()
     const randomId = Math.random().toString(36).substring(2, 10)
-    const key = `${timestamp}-${randomId}.png`
+    const key = `${new Date().toISOString()}_${randomId}.png`
 
     // Upload to Cloudflare R2
     const publicUrl = await uploadToR2(key, imageBuffer)

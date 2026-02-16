@@ -5,9 +5,8 @@ import { usePost } from '@/app/p/[hash]/layout'
 import { ImageIcon } from '@/lib/components/icons'
 import { QuotedPost } from '@/lib/components/post'
 import { Button, TextArea } from '@/lib/components/ui'
-// import { supabase } from '@/lib/services/supabase-client'
+import { uploadFile } from '@/lib/services/trpc'
 import { useFetchNeynarWithAuth } from '@/lib/utils/farcaster'
-import { formatDateFull } from '@/lib/utils/format'
 
 export function ComposeForm({
   replyToCastHash,
@@ -147,16 +146,4 @@ function MediaButton({ onMediaSelected }: { onMediaSelected: (mediaUrls: string[
       />
     </div>
   )
-}
-
-async function uploadFile(file) {
-  const path = ('' + formatDateFull(new Date()) + '_' + file.name).replace(/\s+/g, '_')
-  // const { data, error } = await supabase.storage.from('cast_embeds').upload(path, file)
-  // if (error) {
-  //   console.error('Error uploading file:', error)
-  //   return null
-  // } else {
-  //   return supabase.storage.from('cast_embeds').getPublicUrl(data.path).data.publicUrl
-  // }
-  return null
 }

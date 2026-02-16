@@ -1,14 +1,22 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
-import { initTRPC } from '@trpc/server'
+import { TRPCError, initTRPC } from '@trpc/server'
 import { z } from 'zod'
 
+import { uploadToR2 } from '@/lib/services/cloudflare-r2'
 import { fetchAllPosts, fetchUserByUsername, fetchUserPosts } from '@/lib/services/db'
 
 const t = initTRPC.create()
 
 export const appRouter = t.router({
-  hello: t.procedure.input(z.object({ name: z.string() })).query(({ input }) => {
-    return { greeting: `Hello, ${input.name}!` }
+  uploadFile: t.procedure.input(z.instanceof(FormData)).mutation(async ({ input }) => {
+    const filename = input.get('filename')
+    const file = input.get('file')
+    if (typeof filename !== 'string' || !(file instanceof File)) throw 'Invalid upload payload'
+
+    const body = Buffer.from(await file.arrayBuffer())
+    const url = await uploadToR2(filename, body)
+    if (!url) throw 'Failed to upload file'
+    return { url }
   }),
   posts: t.procedure.query(async () => {
     return await fetchAllPosts()
