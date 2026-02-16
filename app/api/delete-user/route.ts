@@ -10,13 +10,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'username is required' }, { status: 400 })
   }
 
-  const user = await fetchUserByUsername(username)
+  const user = await fetchUserByUsername({ username })
   if (!user) {
     return NextResponse.json({ error: 'user not found' }, { status: 404 })
   }
   const userId = user.id
 
-  const posts = await fetchUserPosts(username)
+  const posts = await fetchUserPosts({ username })
   const imageUrls: string[] = posts.items.flatMap((post: any) => post.images || [])
 
   // Delete images from R2

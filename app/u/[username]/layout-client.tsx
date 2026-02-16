@@ -88,7 +88,7 @@ export function useUser(username: string) {
   const auth = useAuth()
   return useQuery({
     queryKey: ['user', username, auth?.userFid],
-    queryFn: () => fetchUserByUsername(username),
+    queryFn: () => fetchUserByUsername({ username }),
     staleTime: 1000 * 60 * 5,
   })
 }
@@ -101,7 +101,7 @@ export function UserFeed({ username, display }: { username: string; display?: st
   return (
     <Feed
       queryKey={['user-feed', user?.username, auth?.userFid]}
-      queryFn={({ pageParam }) => fetchUserPosts(username)}
+      queryFn={({ pageParam }) => fetchUserPosts({ username })}
       display={display}
     />
   )

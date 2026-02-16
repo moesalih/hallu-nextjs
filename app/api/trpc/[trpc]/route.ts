@@ -14,10 +14,10 @@ export const appRouter = t.router({
     return await fetchAllPosts()
   }),
   userPosts: t.procedure.input(z.object({ username: z.string() })).query(async ({ input }) => {
-    return await fetchUserPosts(input.username)
+    return await fetchUserPosts(input)
   }),
   user: t.procedure.input(z.object({ username: z.string() })).query(async ({ input }) => {
-    return await fetchUserByUsername(input.username)
+    return await fetchUserByUsername(input)
   }),
 })
 

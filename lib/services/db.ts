@@ -4,13 +4,13 @@ export async function fetchAllPosts() {
   return await dbQuery(
     `SELECT posts.*, users.username AS user_username
      FROM posts
-     LEFT JOIN users ON users.id = posts.user_id
+     INNER JOIN users ON users.id = posts.user_id
      ORDER BY posts.created_at DESC
      LIMIT 20`,
   ).then(defaultPostFeedTransform)
 }
 
-export async function fetchUserPosts(username: string) {
+export async function fetchUserPosts({ username }: { username: string }) {
   return await dbQuery(
     `SELECT posts.*, users.username AS user_username
      FROM posts
@@ -22,8 +22,8 @@ export async function fetchUserPosts(username: string) {
   ).then(defaultPostFeedTransform)
 }
 
-export async function fetchUserByUsername(username: string) {
-  const rows = await dbQuery(`SELECT * FROM users WHERE username = $1 LIMIT 1`, [username])
+export async function fetchUserByUsername({ username }: { username: string }) {
+  const rows = await dbQuery(`SELECT * FROM users WHERE username = ? LIMIT 1`, [username])
   return rows[0] || null
 }
 
