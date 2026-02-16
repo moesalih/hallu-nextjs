@@ -36,23 +36,23 @@ export async function sendAnalyticsEvent({ event, param, fid, platform }: Analyt
   })
 }
 
-const postsWithUsers = qb
-  .select({
-    ...getTableColumns(posts),
-    user_username: sql`${users.username}`.as('user_username'),
-  })
-  .from(posts)
-  .innerJoin(users, eq(users.id, posts.user_id))
-  .orderBy(desc(posts.created_at))
-  .limit(20)
+const postsWithUsers = () =>
+  qb
+    .select({
+      ...getTableColumns(posts),
+      user_username: sql`${users.username}`.as('user_username'),
+    })
+    .from(posts)
+    .innerJoin(users, eq(users.id, posts.user_id))
+    .orderBy(desc(posts.created_at))
+    .limit(20)
 
 export async function fetchAllPosts() {
-  console.log('fetchAllPosts')
-  return await dbQuery(postsWithUsers.toSQL()).then(postFeedTransform)
+  return await dbQuery(postsWithUsers().toSQL()).then(postFeedTransform)
 }
 
 export async function fetchUserPosts({ username }: { username: string }) {
-  return await dbQuery(postsWithUsers.where(eq(users.username, username)).toSQL()).then(postFeedTransform)
+  return await dbQuery(postsWithUsers().where(eq(users.username, username)).toSQL()).then(postFeedTransform)
 }
 
 export async function fetchUserByUsername({ username }: { username: string }) {
