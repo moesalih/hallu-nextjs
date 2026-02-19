@@ -1,4 +1,5 @@
-import { generatePost, getRandomUserWithPrompt, getUserByUsername } from './generate-post'
+import { fetchUserByUsername, getRandomUserWithPrompt } from '@/lib/services/db'
+import { generatePost } from './generate-post'
 
 export async function GET(request: Request) {
   try {
@@ -7,7 +8,7 @@ export async function GET(request: Request) {
     const username = searchParams.get('username')
 
     // Fetch user based on whether username was provided
-    const user = username ? await getUserByUsername(username) : await getRandomUserWithPrompt()
+    const user = username ? await fetchUserByUsername({ username }) : await getRandomUserWithPrompt()
 
     if (!user) {
       const errorMsg = username ? `User '${username}' not found or has no prompt` : 'No users with prompts found'

@@ -1,6 +1,8 @@
 import { generateText } from 'ai'
 // import { google } from '@ai-sdk/google'
 
+import { uploadToR2 } from './cloudflare-r2'
+
 export async function createText(prompt: string, temperature: number = 1.0) {
   const { text } = await generateText({
     model: 'google/gemini-3-flash-preview',
@@ -11,10 +13,19 @@ export async function createText(prompt: string, temperature: number = 1.0) {
   return text
 }
 
-export async function createImage(prompt: string) {
+export async function createImage(prompt: string, imageUrl?: string) {
   const { files, warnings } = await generateText({
     model: 'google/gemini-2.5-flash-image',
-    prompt: prompt,
+    // prompt: prompt,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: prompt },
+          ...(imageUrl ? [{ type: 'image', image: new URL(imageUrl) } as const] : []),
+        ],
+      },
+    ],
     providerOptions: {
       google: {
         responseModalities: ['IMAGE'],
@@ -29,4 +40,22 @@ export async function createImage(prompt: string) {
   }
 
   return files[0].base64
+}
+
+export async function generateAndUploadImage(prompt: string, imageUrl?: string): Promise<string | null> {
+  try {
+    const base64 = await createImage(prompt, imageUrl)
+    const imageBuffer = Buffer.from(base64, 'base64')
+
+    // Generate unique filename
+    const randomId = Math.random().toString(36).substring(2, 10)
+    const key = `${new Date().toISOString()}_${randomId}.png`
+
+    // Upload to Cloudflare R2
+    const publicUrl = await uploadToR2(key, imageBuffer)
+    return publicUrl
+  } catch (error) {
+    console.error('generateAndUploadImage error:', error)
+    return null
+  }
 }

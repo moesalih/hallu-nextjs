@@ -1,5 +1,4 @@
-import { createImage, createText } from '@/lib/services/ai'
-import { uploadToR2 } from '@/lib/services/cloudflare-r2'
+import { createText, generateAndUploadImage } from '@/lib/services/ai'
 import { dbQuery } from '@/lib/services/cloudflare-d1'
 
 // Randomization pools for variety
@@ -135,44 +134,6 @@ function getTemporalContext(): string {
   else seasonalHint = 'winter '
 
   return `${timeOfDay} on a ${isWeekend ? 'weekend' : 'weekday'}, ${seasonalHint}`
-}
-
-export async function getRandomUserWithPrompt() {
-  const result = await dbQuery({
-    sql: `
-    SELECT id, username, prompt FROM users 
-    WHERE prompt IS NOT NULL AND prompt != '' 
-    ORDER BY RANDOM() 
-    LIMIT 1
-  `,
-  })
-  return result[0] || null
-}
-
-export async function getUserByUsername(username: string) {
-  const result = await dbQuery({
-    sql: `SELECT id, username, prompt FROM users WHERE username = $1 AND prompt IS NOT NULL AND prompt != ''`,
-    params: [username],
-  })
-  return result[0] || null
-}
-
-async function generateAndUploadImage(prompt: string): Promise<string | null> {
-  try {
-    const base64 = await createImage(prompt)
-    const imageBuffer = Buffer.from(base64, 'base64')
-
-    // Generate unique filename
-    const randomId = Math.random().toString(36).substring(2, 10)
-    const key = `${new Date().toISOString()}_${randomId}.png`
-
-    // Upload to Cloudflare R2
-    const publicUrl = await uploadToR2(key, imageBuffer)
-    return publicUrl
-  } catch (error) {
-    console.error('generateAndUploadImage error:', error)
-    return null
-  }
 }
 
 export interface GeneratePostResult {

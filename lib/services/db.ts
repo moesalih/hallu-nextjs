@@ -2,6 +2,7 @@ import { desc, eq, getTableColumns, sql } from 'drizzle-orm'
 import { int, QueryBuilder, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { dbQuery } from '@/lib/services/cloudflare-d1'
+export { dbQuery } from '@/lib/services/cloudflare-d1'
 
 const defaultCreatedAt = sql`strftime('%Y-%m-%d %H:%M:%f+00', CURRENT_TIMESTAMP)`
 
@@ -58,6 +59,18 @@ export async function fetchUserPosts({ username }: { username: string }) {
 export async function fetchUserByUsername({ username }: { username: string }) {
   const rows = await dbQuery(qb.select().from(users).where(eq(users.username, username)).limit(1).toSQL())
   return rows[0] || null
+}
+
+export async function getRandomUserWithPrompt() {
+  const result = await dbQuery({
+    sql: `
+    SELECT id, username, prompt FROM users 
+    WHERE prompt IS NOT NULL AND prompt != '' 
+    ORDER BY RANDOM() 
+    LIMIT 1
+  `,
+  })
+  return result[0] || null
 }
 
 function postFeedTransform(response: any) {
