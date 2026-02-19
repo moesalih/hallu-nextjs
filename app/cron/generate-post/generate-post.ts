@@ -174,7 +174,7 @@ Consider a ${mood} moment related to "${activityMoment}".
 CRITICAL: The user's description is what matters most. Only use the creative direction above if it enhances the authenticity. Don't force it. Make each image unique and true to the user's character.`
 
   const postPrompt = await createText(enhancedUserPrompt, 1.2)
-  const url = await generateAndUploadImage(postPrompt)
+  const url = await generateAndUploadImage({ prompt: postPrompt })
 
   if (!url) {
     return {

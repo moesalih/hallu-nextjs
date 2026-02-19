@@ -13,9 +13,15 @@ export async function createText(prompt: string, temperature: number = 1.0) {
   return text
 }
 
-export async function createImage(prompt: string, imageUrl?: string) {
+type CreateImageParams = {
+  prompt: string
+  imageUrl?: string
+  model?: string
+}
+
+export async function createImage({ prompt, imageUrl, model }: CreateImageParams): Promise<string> {
   const { files, warnings } = await generateText({
-    model: 'google/gemini-2.5-flash-image',
+    model: model || 'google/gemini-2.5-flash-image',
     // prompt: prompt,
     messages: [
       {
@@ -42,17 +48,15 @@ export async function createImage(prompt: string, imageUrl?: string) {
   return files[0].base64
 }
 
-export async function generateAndUploadImage(prompt: string, imageUrl?: string): Promise<string | null> {
+export async function generateAndUploadImage({ prompt, imageUrl, model }: CreateImageParams): Promise<string | null> {
   try {
-    const base64 = await createImage(prompt, imageUrl)
+    const base64 = await createImage({ prompt, imageUrl, model })
     const imageBuffer = Buffer.from(base64, 'base64')
 
-    // Generate unique filename
     const randomId = Math.random().toString(36).substring(2, 10)
-    const key = `${new Date().toISOString()}_${randomId}.png`
+    const filename = `${new Date().toISOString()}_${randomId}.png`
 
-    // Upload to Cloudflare R2
-    const publicUrl = await uploadToR2(key, imageBuffer)
+    const publicUrl = await uploadToR2(filename, imageBuffer)
     return publicUrl
   } catch (error) {
     console.error('generateAndUploadImage error:', error)
