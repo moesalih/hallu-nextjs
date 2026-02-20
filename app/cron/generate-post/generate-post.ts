@@ -1,5 +1,5 @@
 import { createText, generateAndUploadImage } from '@/lib/services/ai'
-import { dbQuery } from '@/lib/services/cloudflare-d1'
+import { insertPost } from '@/lib/services/db'
 
 // Randomization pools for variety
 const ACTIVITY_MOMENTS = [
@@ -136,24 +136,7 @@ function getTemporalContext(): string {
   return `${timeOfDay} on a ${isWeekend ? 'weekend' : 'weekday'}, ${seasonalHint}`
 }
 
-export interface GeneratePostResult {
-  user: any
-  postPrompt: string
-  url?: string
-  caption?: string
-  post?: any
-  variety: {
-    activityMoment: string
-    // perspective: string
-    mood: string
-    // style: string
-    contentType: string
-    // temporal: string
-  }
-  error?: string
-}
-
-export async function generatePost(user: any): Promise<GeneratePostResult> {
+export async function generatePost(user: any): Promise<any> {
   // Generate variety elements
   const activityMoment = getRandomElement(ACTIVITY_MOMENTS)
   // const perspective = getRandomElement(PERSPECTIVES)
@@ -174,13 +157,18 @@ Consider a ${mood} moment related to "${activityMoment}".
 CRITICAL: The user's description is what matters most. Only use the creative direction above if it enhances the authenticity. Don't force it. Make each image unique and true to the user's character.`
 
   const postPrompt = await createText(enhancedUserPrompt, 1.2)
-  const url = await generateAndUploadImage({ prompt: postPrompt })
+
+  const url = await generateAndUploadImage({
+    // model: 'google/gemini-3-pro-image',
+    prompt: postPrompt,
+    imageUrl: user.reference_image_url || undefined,
+  })
 
   if (!url) {
     return {
       user,
       variety: { activityMoment, mood, contentType },
-      postPrompt,
+      postPrompt: { postPrompt, referenceImageUrl: user.reference_image_url },
       error: 'Failed to generate image',
     }
   }
@@ -193,16 +181,12 @@ Write the caption with a ${mood} tone, ${contentType}. Make it short and authent
 
   const caption = await createText(enhancedCaptionPrompt, 1.1)
 
-  // Create the post in the database
-  const [post] = await dbQuery({
-    sql: `INSERT INTO posts (user_id, text, images) VALUES ($1, $2, $3) RETURNING *`,
-    params: [user.id, caption, JSON.stringify([url])],
-  })
+  const post = await insertPost({ user_id: user.id, text: caption, images: [url] })
 
   return {
     user,
     variety: { activityMoment, mood, contentType },
-    postPrompt,
+    postPrompt: { postPrompt, referenceImageUrl: user.reference_image_url },
     post,
   }
 }

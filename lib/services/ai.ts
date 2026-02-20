@@ -20,7 +20,7 @@ type CreateImageParams = {
 }
 
 export async function createImage({ prompt, imageUrl, model }: CreateImageParams): Promise<string> {
-  const { files, warnings } = await generateText({
+  const { text, files, warnings } = await generateText({
     model: model || 'google/gemini-2.5-flash-image',
     // prompt: prompt,
     messages: [
@@ -40,6 +40,8 @@ export async function createImage({ prompt, imageUrl, model }: CreateImageParams
     },
   })
 
+  console.log('createImage response:', { text, files, warnings })
+
   if (!files || files.length === 0) {
     console.error('createImage warnings:', warnings)
     throw new Error(`No image generated`)
@@ -50,6 +52,7 @@ export async function createImage({ prompt, imageUrl, model }: CreateImageParams
 
 export async function generateAndUploadImage({ prompt, imageUrl, model }: CreateImageParams): Promise<string | null> {
   try {
+    console.log('generateAndUploadImage:', { prompt, imageUrl, model })
     const base64 = await createImage({ prompt, imageUrl, model })
     const imageBuffer = Buffer.from(base64, 'base64')
 

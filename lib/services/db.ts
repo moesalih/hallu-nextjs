@@ -11,6 +11,7 @@ const users = sqliteTable('users', {
   created_at: text('created_at').notNull().default(defaultCreatedAt),
   username: text('username'),
   prompt: text('prompt'),
+  reference_image_url: text('reference_image_url'),
 })
 
 const posts = sqliteTable('posts', {
@@ -37,6 +38,27 @@ export async function sendAnalyticsEvent({ event, param, fid, platform }: Analyt
   })
 }
 
+//////////
+
+export async function fetchUserByUsername({ username }: { username: string }) {
+  const rows = await dbQuery(qb.select().from(users).where(eq(users.username, username)).limit(1).toSQL())
+  return rows[0] || null
+}
+
+export async function getRandomUserWithPrompt() {
+  const result = await dbQuery({
+    sql: `
+    SELECT * FROM users 
+    WHERE prompt IS NOT NULL AND prompt != '' 
+    ORDER BY RANDOM() 
+    LIMIT 1
+  `,
+  })
+  return result[0] || null
+}
+
+//////////
+
 const postsWithUsers = () =>
   qb
     .select({
@@ -56,21 +78,12 @@ export async function fetchUserPosts({ username }: { username: string }) {
   return await dbQuery(postsWithUsers().where(eq(users.username, username)).toSQL()).then(postFeedTransform)
 }
 
-export async function fetchUserByUsername({ username }: { username: string }) {
-  const rows = await dbQuery(qb.select().from(users).where(eq(users.username, username)).limit(1).toSQL())
-  return rows[0] || null
-}
-
-export async function getRandomUserWithPrompt() {
-  const result = await dbQuery({
-    sql: `
-    SELECT id, username, prompt FROM users 
-    WHERE prompt IS NOT NULL AND prompt != '' 
-    ORDER BY RANDOM() 
-    LIMIT 1
-  `,
+export async function insertPost({ user_id, text, images }: { user_id: number; text: string; images: string[] }) {
+  const [post] = await dbQuery({
+    sql: `INSERT INTO posts (user_id, text, images) VALUES ($1, $2, $3) RETURNING *`,
+    params: [user_id, text, JSON.stringify(images)],
   })
-  return result[0] || null
+  return post
 }
 
 function postFeedTransform(response: any) {
